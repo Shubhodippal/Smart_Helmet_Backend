@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  smart-helmet:
+    container_name: smart-helmet
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx3g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:G1HeapRegionSize=16m -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -XX:+UseCompressedOops -XX:+UseCompressedClassPointers -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:G1ConcRefinementThreads=4
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+    restart: always
