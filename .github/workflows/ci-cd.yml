@@ -60,7 +60,7 @@ jobs:
           
           # Wait for application to be ready (up to 3 minutes)
           for i in {1..3}; do
-            if curl -f https://examspace.shubhodip.in/actuator/health 2>/dev/null; then
+            if curl -f https://hack.shubhodip.in/actuator/health 2>/dev/null; then
               echo "✅ Application is healthy and responding from external endpoint!"
               break
             else
@@ -70,7 +70,7 @@ jobs:
           done
           
           # Final comprehensive health check
-          if curl -f https://examspace.shubhodip.in/actuator/health; then
+          if curl -f https://hack.shubhodip.in/actuator/health; then
             echo "✅ Final health check passed - Application is fully operational!"
           else
             echo "❌ Final health check failed - Application may not be accessible"

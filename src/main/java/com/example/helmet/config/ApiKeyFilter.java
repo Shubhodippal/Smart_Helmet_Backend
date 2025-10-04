@@ -35,7 +35,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         // Skip API key check for Actuator endpoints
         String uri = request.getRequestURI();
-        if (uri.startsWith("/actuator")) {
+        if (uri.contains("/actuator")) {
             filterChain.doFilter(request, response);
             return;
         }

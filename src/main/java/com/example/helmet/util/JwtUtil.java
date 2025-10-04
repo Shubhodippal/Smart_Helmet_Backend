@@ -23,10 +23,10 @@ public class JwtUtil {
     
     private final long refreshTokenExpiration;
     
-    public JwtUtil(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") long jwtExpiration) {
+    public JwtUtil(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") long jwtExpiration, @Value("${jwt.refresh.expiration}") long jwtRefreshExpiration) {
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         this.tokenExpiration = jwtExpiration;
-        this.refreshTokenExpiration = 1000 * 60 * 60 * 24 * 7; // 7 days
+        this.refreshTokenExpiration = jwtRefreshExpiration;
     }
 
     public String extractUsername(String token) {
@@ -54,11 +54,12 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String userId, String email, String name) {
+    public String generateToken(String userId, String email, String name, String phone) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("email", email);
         claims.put("name", name);
+        claims.put("phone", phone);
         claims.put("type", "access");
         
         return Jwts.builder()
@@ -70,11 +71,12 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateRefreshToken(String userId, String email, String name) {
+    public String generateRefreshToken(String userId, String email, String name, String phone) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("email", email);
         claims.put("name", name);
+        claims.put("phone", phone);
         claims.put("type", "refresh");
         
         return Jwts.builder()
@@ -121,6 +123,16 @@ public class JwtUtil {
     public String extractEmailFromRefreshToken(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("email", String.class);
+    }
+
+    public String extractPhoneFromRefreshToken(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("phone", String.class);
+    }
+
+    public String extractPhone(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("phone", String.class);
     }
 
     public String extractNameFromRefreshToken(String token) {

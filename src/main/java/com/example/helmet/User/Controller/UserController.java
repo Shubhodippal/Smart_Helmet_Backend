@@ -134,8 +134,8 @@ public class UserController {
         
         userService.updateLastLogin(user.getEmail());
 
-        String accessToken = jwtUtil.generateToken(user.getUid(), user.getEmail(), user.getName());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getUid(), user.getEmail(), user.getName());
+        String accessToken = jwtUtil.generateToken(user.getUid(), user.getEmail(), user.getName(), user.getPhone());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUid(), user.getEmail(), user.getName(), user.getPhone());
 
         Map<String, String> response = new HashMap<>();
         response.put("token", accessToken);
@@ -174,8 +174,14 @@ public class UserController {
         String email = jwtUtil.extractEmailFromRefreshToken(refreshToken);
         String name = jwtUtil.extractNameFromRefreshToken(refreshToken);
         
-        String newAccessToken = jwtUtil.generateToken(userId, email, name);
-        String newRefreshToken = jwtUtil.generateRefreshToken(userId, email, name);
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        String phone = user.getPhone();
+        
+        String newAccessToken = jwtUtil.generateToken(userId, email, name, phone);
+        String newRefreshToken = jwtUtil.generateRefreshToken(userId, email, name, phone);
         
         Map<String, String> response = new HashMap<>();
         response.put("token", newAccessToken);
