@@ -13,20 +13,9 @@ jobs:
 
       - name: Cleanup of port 8084
         run: |
-          docker ps -q | xargs -r docker stop || true
-          docker ps -aq | xargs -r docker rm -f || true
+          docker stop smart_helmet || true
+          docker rm -f smart_helmet || true
           docker network prune -f || true
-          lsof -ti:8084 | xargs -r kill -9 || true
-          fuser -k 8084/tcp || true
-          for i in {1..20}; do
-            if lsof -i:8084 2>/dev/null; then
-              echo "Waiting for port 8084 to be freed... (attempt $i/20)"
-              sleep 3
-            else
-              echo "Port 8084 is now free"
-              break
-            fi
-          done
 
       - name: Clean old JAR files
         run: |
@@ -42,21 +31,10 @@ jobs:
 
       - name: Final aggressive cleanup
         run: |
-          docker ps -q | xargs -r docker stop || true
-          docker ps -aq | xargs -r docker rm -f || true
+          docker stop smart_helmet || true
+          docker rm -f smart_helmet || true
           docker system prune -f || true
           docker network prune -f || true
-          lsof -ti:8084 | xargs -r kill -9 || true
-          fuser -k 8084/tcp || true
-          for i in {1..30}; do
-            if lsof -i:8084 2>/dev/null; then
-              echo "Waiting... (attempt $i/30)"
-              sleep 2
-            else
-              echo "Port 8084 is free"
-              break
-            fi
-          done
 
       - name: Start container with memory+swap limits and auto-restart
         run: |
