@@ -51,4 +51,14 @@ public class EmergencyContactDAOImpl implements EmergencyContactDAO {
             entityManager.remove(contact);
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteByUidAndEmailAndRelation(String uid, String email, String relation) {
+        Query query = entityManager.createQuery("DELETE FROM EmergencyContact e WHERE e.uid = :uid AND e.emergencyContactEmail = :email AND e.emergencyContactRelation = :relation");
+        query.setParameter("uid", uid);
+        query.setParameter("email", email);
+        query.setParameter("relation", relation);
+        query.executeUpdate();
+    }
 }

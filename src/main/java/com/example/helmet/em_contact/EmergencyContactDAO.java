@@ -10,4 +10,5 @@ public interface EmergencyContactDAO {
     EmergencyContact findById(Long id);
     EmergencyContact update(EmergencyContact contact);
     void delete(Long id);
+    void deleteByUidAndEmailAndRelation(String uid, String email, String relation);
 }

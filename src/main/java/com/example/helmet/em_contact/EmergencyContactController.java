@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -112,6 +113,24 @@ public class EmergencyContactController {
             contact.setEmergencyContactRelation(request.getEmergencyContactRelation());
             EmergencyContact updated = emergencyContactDAO.update(contact);
             return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteEmergencyContact(@RequestHeader("Authorization") String token, @RequestBody EmergencyContactRequest request) {
+        try {
+            String uid = validateTokenAndGetUid(token);
+            
+            // Check if user has more than one emergency contact
+            List<EmergencyContact> existingContacts = emergencyContactDAO.findByUid(uid);
+            if (existingContacts.size() <= 1) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot delete the last emergency contact. At least one emergency contact must be maintained.");
+            }
+            
+            emergencyContactDAO.deleteByUidAndEmailAndRelation(uid, request.getEmergencyContactEmail(), request.getEmergencyContactRelation());
+            return ResponseEntity.ok("Emergency contact deleted successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: " + e.getMessage());
         }
