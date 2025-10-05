@@ -18,3 +18,17 @@ CREATE TABLE emergency_contacts(
     modified_at DATETIME,
     FOREIGN KEY (uid) REFERENCES users(uid)
 );
+
+CREATE TABLE profile(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uid VARCHAR(255) NOT NULL UNIQUE,
+    address TEXT,
+    gender VARCHAR(50),
+    bike_registration VARCHAR(255),
+    insurance VARCHAR(255),
+    blood_group VARCHAR(10),
+    med_condition TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (uid) REFERENCES users(uid)
+);
